@@ -163,13 +163,13 @@ export class BottleRocketUpdater extends cdk.Construct {
       resources: [
         `arn:${cdk.Stack.of(this).partition}:ssm:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
-        }:document/${UpdateCheckCommand}`,
+        }:document/${UpdateCheckCommand.name}`,
         `arn:${cdk.Stack.of(this).partition}:ssm:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
-        }:document/${UpdateApplyCommand}`,
+        }:document/${UpdateApplyCommand.name}`,
         `arn:${cdk.Stack.of(this).partition}:ssm:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
-        }:document/${RebootCommand}`,
+        }:document/${RebootCommand.name}`,
         `arn:${cdk.Stack.of(this).partition}:ec2:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
         }:instance/*`,
@@ -216,12 +216,18 @@ export class BottleRocketUpdater extends cdk.Construct {
         `${UpdateCheckCommand.name}`,
         "-apply-document",
         `${UpdateApplyCommand.name}`,
-        `-reboot-document '${RebootCommand.name}'`,
+        "-reboot-document",
+        `${RebootCommand.name}`,
       ],
       logging: ecs.LogDriver.awsLogs({
         logGroup: logGroup,
         streamPrefix: "brUpdaterEcsTask",
       }),
+    });
+
+    new cdk.CfnOutput(this, "BottleRocketUpdateLG", {
+      value: logGroup.logGroupName,
+      exportName: "BrUpdaterLogGroupName",
     });
 
     const ecsTaskTarget = new EcsTask({
