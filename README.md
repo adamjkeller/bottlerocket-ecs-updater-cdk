@@ -9,7 +9,7 @@ In addition, a construct was created for the Bottlerocket [updater](https://gith
 
 To walkthrough a demonstration of how the Bottlerocket updater works, run a git checkout on the `demo` branch.
 
-#### Walkthrough the demo
+#### Walkthrough
 
 1) Deploy the stack (This assumes you have already bootstrapped your account and region)
 
@@ -17,4 +17,18 @@ To walkthrough a demonstration of how the Bottlerocket updater works, run a git 
 cdk deploy --require-approval never
 ```
 
-2) O
+2) Once the stack is deployed, the name of the Cloudwatch Logs group will be displayed. 
+Copy this name and navigate to the Cloudwatch Logs console in AWS. 
+Example of output:
+
+```
+Outputs:
+BottleRocketDemo.BRUpdaterBottleRocketUpdateLG86D2BED1 = BottleRocketDemo-BRUpdaterUpdaterLogGroup920D5B89-eDQb4CrtQgw5
+```
+
+3) Monitor the logs. 
+In realtime you will see the updater take action.
+It will start by putting the host into a `DRAINING` state.
+Next, the scheduler will schedule those tasks to a new host which will come up because of capacity providers and cluster autoscaling.
+Finally, once the tasks are rescheduled the OS update will take place and when the update is complete it will reboot and register back into the cluster.
+
