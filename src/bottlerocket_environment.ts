@@ -7,6 +7,7 @@ import * as ecs from "@aws-cdk/aws-ecs";
 import * as kms from "@aws-cdk/aws-kms";
 import * as logs from "@aws-cdk/aws-logs";
 import * as s3 from "@aws-cdk/aws-s3";
+//import { ParameterType } from "@aws-cdk/aws-ssm";
 
 export class BottleRocketECS extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
@@ -39,7 +40,12 @@ export class BottleRocketECS extends Stack {
     const bottlerocketAsg = new autoscaling.AutoScalingGroup(this, "BRASG", {
       vpc: vpc,
       instanceType: new ec2.InstanceType("t3.medium"),
-      machineImage: new ecs.BottleRocketImage(),
+      // machineImage: new ecs.BottleRocketImage(),
+      machineImage: ec2.MachineImage.fromSSMParameter(
+        "/aws/service/bottlerocket/aws-ecs-1/x86_64/1.1.0/image_id",
+        ec2.OperatingSystemType.UNKNOWN,
+        ec2.UserData.custom("")
+      ),
       minCapacity: 0,
       maxCapacity: 10,
       keyName: "brtest",
