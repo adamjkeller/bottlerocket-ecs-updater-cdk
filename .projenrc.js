@@ -1,6 +1,6 @@
 const { AwsCdkTypeScriptApp } = require("projen");
 const project = new AwsCdkTypeScriptApp({
-  cdkVersion: "1.95.2",
+  cdkVersion: "1.111.0",
   defaultReleaseBranch: "main",
   name: "bottlerocket-cdk",
   gitignore: ["cdk.context.json"],
