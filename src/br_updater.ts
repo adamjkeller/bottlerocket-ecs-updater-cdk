@@ -28,12 +28,14 @@ export interface BottleRocketUpdaterProps {
    * Enable/Disable scheduled event
    */
   readonly scheduleState?: boolean;
-
+  /**
+   * Docker image used for the updater task
+   */
   readonly updaterImage?: string;
 }
 
 /**
- * The FargateJobExecutor
+ * The Bottle Rocket Updater 
  */
 export class BottleRocketUpdater extends cdk.Construct {
   readonly cluster: ecs.ICluster;
@@ -52,7 +54,7 @@ export class BottleRocketUpdater extends cdk.Construct {
     this.cluster = props.cluster;
     this.subnets = props.subnets;
     this.logGroupName = props.logGroupName;
-    this.scheduleState = props.scheduleState;
+    this.scheduleState = props.scheduleState ?? true;
     this.updaterImage =
       props.updaterImage ??
       "public.ecr.aws/bottlerocket/bottlerocket-ecs-updater:v0.1.0";
@@ -235,10 +237,11 @@ export class BottleRocketUpdater extends cdk.Construct {
       taskDefinition: updaterTaskDef,
     });
 
-    new Rule(this, "ScheduleRule", {
-      schedule: Schedule.rate(cdk.Duration.minutes(5)),
-      //schedule: Schedule.rate(cdk.Duration.hours(4)),
-      targets: [ecsTaskTarget],
-    });
+    if (this.scheduleState) {
+      new Rule(this, "ScheduleRule", {
+        schedule: Schedule.rate(cdk.Duration.minutes(5)),
+        targets: [ecsTaskTarget],
+      });
+    }
   }
 }
