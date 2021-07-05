@@ -28,7 +28,9 @@ export interface BottleRocketUpdaterProps {
    * Enable/Disable scheduled event
    */
   readonly scheduleState?: boolean;
-
+  /**
+   * Docker image used for the updater task
+   */
   readonly updaterImage?: string;
 }
 
