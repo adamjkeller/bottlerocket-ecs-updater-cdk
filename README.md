@@ -27,8 +27,11 @@ Outputs:
 BottleRocketDemo.BRUpdaterBottleRocketUpdateLG86D2BED1 = BottleRocketDemo-BRUpdaterUpdaterLogGroup920D5B89-eDQb4CrtQgw5
 ```
 
-3. Monitor the logs.
-   In realtime you will see the updater take action.
+3. Monitor the environment:
+
+   ### The updater controller
+
+   To watch the updater in realtime, we will tail the logs to gain insight into what's happening.
 
    To tail the logs via the AWS CLI, run the following command:
 
@@ -41,9 +44,16 @@ BottleRocketDemo.BRUpdaterBottleRocketUpdateLG86D2BED1 = BottleRocketDemo-BRUpda
    It will determine which host to update, and begins by putting the host into a `DRAINING` state.
    Next, the scheduler will schedule those tasks to a new host which will come up because of capacity providers and cluster autoscaling.
    Finally, once the tasks are rescheduled the OS update will take place and when the update is complete it will reboot and register back into the cluster.
-   
+
+   ### The Cluster
+
+   Navigate to the ECS Console, and drill down into the ECS Instances.  
+   When the updater begins the update process, it will first set the instance to `DRAINING` as mentioned above.
+   When this happens, pay attention as the scheduler will begin the process of rescheduling the tasks to a new instance.
+   This will take a couple of minutes as cluster autoscaling will kick in to bring up a new host to run the tasks.
+
 4. Cleanup resources by running the following commands:
-   
+
    ```bash
    cdk destroy -f
    ```
