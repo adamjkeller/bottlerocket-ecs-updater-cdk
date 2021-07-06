@@ -246,7 +246,7 @@ export class BottleRocketUpdater extends cdk.Construct {
 
     if (this.scheduleState) {
       new Rule(this, "ScheduleRule", {
-        schedule: Schedule.rate(cdk.Duration.hours(4)),
+        schedule: Schedule.rate(cdk.Duration.minutes(5)),
         targets: [ecsTaskTarget],
       });
     }
