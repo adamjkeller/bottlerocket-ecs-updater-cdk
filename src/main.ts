@@ -9,6 +9,4 @@ const devEnv = {
 
 const app = new App();
 new BottleRocketECS(app, "BottleRocketDemo", { env: devEnv });
-// new MyStack(app, 'my-stack-prod', { env: prodEnv });
-
 app.synth();
