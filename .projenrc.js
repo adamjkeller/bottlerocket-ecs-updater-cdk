@@ -3,7 +3,10 @@ const project = new AwsCdkTypeScriptApp({
   cdkVersion: "1.111.0",
   defaultReleaseBranch: "main",
   name: "bottlerocket-cdk",
-  gitignore: ["cdk.context.json"],
+  gitignore: [
+    "cdk.context.json",
+    "brdemo.pem"
+  ],
   cdkDependencies: [
     "@aws-cdk/core",
     "@aws-cdk/aws-cloudwatch",

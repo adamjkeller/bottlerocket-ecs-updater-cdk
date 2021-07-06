@@ -21,6 +21,7 @@ export class BottleRocketECS extends Stack {
       machineImage: new ecs.BottleRocketImage(),
       minCapacity: 0,
       maxCapacity: 10,
+      keyName: 'bottlerocketdemo'
     });
 
     const capacityProviderBr = new ecs.AsgCapacityProvider(this, "ASGCPBR", {

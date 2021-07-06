@@ -11,9 +11,10 @@ To walkthrough a demonstration of how the Bottlerocket updater works, run a git 
 
 #### Walkthrough
 
-1) Deploy the stack (This assumes you have already bootstrapped your account and region)
+1) Create an SSH key and deploy the stack (This assumes you have already bootstrapped your account and region)
 
 ```bash
+aws ec2 create-key-pair --key-name bottlerocketdemo --query KeyMaterial --output text | tee -a brdemo.pem
 cdk deploy --require-approval never
 ```
 
@@ -31,4 +32,23 @@ In realtime you will see the updater take action.
 It will start by putting the host into a `DRAINING` state.
 Next, the scheduler will schedule those tasks to a new host which will come up because of capacity providers and cluster autoscaling.
 Finally, once the tasks are rescheduled the OS update will take place and when the update is complete it will reboot and register back into the cluster.
+
+### Testing
+
+#### Instance ID
+INSTANCE_ID=$(aws ec2 describe-instances \
+  --filter "Name=tag-value,Values=BottleRocketDemo/BRASG" \
+  --query 'Reservations[].Instances[].InstanceId' \
+  --output text)
+
+#### Enter a shell into the host
+aws ssm start-session --target $INSTANCE_ID  
+
+##### Initiate the SSH tunnel over SSM
+aws ssm start-session --target $INSTANCE_ID \
+                       --document-name AWS-StartPortForwardingSession \
+                       --parameters '{"portNumber":["22"],"localPortNumber":["9999"]}'
+
+##### SSH into the instance over the SSM tunnel                    
+ssh -L 9999:localhost:22 ec2-user@$INSTANCE_ID -i ./brdemo.pem
 

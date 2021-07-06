@@ -16,6 +16,7 @@
 /dist
 /lib
 /test-reports/
+brdemo.pem
 build/Release
 cdk.context.json
 cdk.out/
