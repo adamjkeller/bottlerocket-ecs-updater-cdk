@@ -26,6 +26,7 @@ export class BottleRocketECS extends Stack {
     const capacityProviderBr = new ecs.AsgCapacityProvider(this, "ASGCPBR", {
       autoScalingGroup: bottlerocketAsg,
       machineImageType: ecs.MachineImageType.BOTTLEROCKET,
+      enableManagedTerminationProtection: false,
     });
 
     ecsCluster.addAsgCapacityProvider(capacityProviderBr, {
