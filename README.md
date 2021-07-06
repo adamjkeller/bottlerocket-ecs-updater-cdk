@@ -55,5 +55,6 @@ BottleRocketDemo.BRUpdaterBottleRocketUpdateLG86D2BED1 = BottleRocketDemo-BRUpda
 4. Cleanup resources by running the following commands:
 
    ```bash
+   aws ec2 delete-key-pair --key-name bottlerocketdemo
    cdk destroy -f
    ```

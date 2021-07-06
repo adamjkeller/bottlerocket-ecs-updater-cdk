@@ -18,7 +18,12 @@ export class BottleRocketECS extends Stack {
     const bottlerocketAsg = new autoscaling.AutoScalingGroup(this, "BRASG", {
       vpc: vpc,
       instanceType: new ec2.InstanceType("t3.micro"),
-      machineImage: new ecs.BottleRocketImage(),
+      // machineImage: new ecs.BottleRocketImage(),
+      machineImage: ec2.MachineImage.fromSSMParameter(
+        "/aws/service/bottlerocket/aws-ecs-1/x86_64/1.1.0/image_id",
+        ec2.OperatingSystemType.UNKNOWN,
+        ec2.UserData.custom("")
+      ),
       minCapacity: 0,
       maxCapacity: 10,
     });
