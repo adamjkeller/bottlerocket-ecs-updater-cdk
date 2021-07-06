@@ -9,6 +9,13 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as logs from "@aws-cdk/aws-logs";
 
 /**
+ * This construct will deploy the Bottlerocket OS updater for Amazon ECS.
+ * Note that while we built this construct, the CDK does offer the ability
+ * to import existing CFN templates. See the documentation for more info.
+ * https://docs.aws.amazon.com/cdk/latest/guide/use_cfn_template.html
+ */
+
+/**
  * The properties for the BottleRocketUpdater
  */
 export interface BottleRocketUpdaterProps {
@@ -35,7 +42,7 @@ export interface BottleRocketUpdaterProps {
 }
 
 /**
- * The Bottle Rocket Updater 
+ * The Bottle Rocket Updater
  */
 export class BottleRocketUpdater extends cdk.Construct {
   readonly cluster: ecs.ICluster;
@@ -239,7 +246,7 @@ export class BottleRocketUpdater extends cdk.Construct {
 
     if (this.scheduleState) {
       new Rule(this, "ScheduleRule", {
-        schedule: Schedule.rate(cdk.Duration.minutes(5)),
+        schedule: Schedule.rate(cdk.Duration.hours(4)),
         targets: [ecsTaskTarget],
       });
     }
