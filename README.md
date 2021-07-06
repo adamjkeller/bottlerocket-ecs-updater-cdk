@@ -41,3 +41,9 @@ BottleRocketDemo.BRUpdaterBottleRocketUpdateLG86D2BED1 = BottleRocketDemo-BRUpda
    It will determine which host to update, and begins by putting the host into a `DRAINING` state.
    Next, the scheduler will schedule those tasks to a new host which will come up because of capacity providers and cluster autoscaling.
    Finally, once the tasks are rescheduled the OS update will take place and when the update is complete it will reboot and register back into the cluster.
+   
+4. Cleanup resources by running the following commands:
+   
+   ```bash
+   cdk destroy -f
+   ```
