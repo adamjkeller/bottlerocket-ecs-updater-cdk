@@ -1,11 +1,12 @@
 import '@aws-cdk/assert/jest';
 import { App } from '@aws-cdk/core';
-import { MyStack } from '../src/main';
+import { BottleRocketECS } from '../src/bottlerocket_environment';
 
 test('Snapshot', () => {
   const app = new App();
-  const stack = new MyStack(app, 'test');
+  const stack = new BottleRocketECS(app, 'test');
 
-  expect(stack).not.toHaveResource('AWS::S3::Bucket');
-  expect(app.synth().getStackArtifact(stack.artifactId).template).toMatchSnapshot();
+  expect(
+    app.synth().getStackArtifact(stack.artifactId).template,
+  ).toMatchSnapshot();
 });
