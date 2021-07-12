@@ -1,12 +1,12 @@
-import { Rule, Schedule } from "@aws-cdk/aws-events";
-import { EcsTask } from "@aws-cdk/aws-events-targets";
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as ecs from '@aws-cdk/aws-ecs';
+import { Rule, Schedule } from '@aws-cdk/aws-events';
+import { EcsTask } from '@aws-cdk/aws-events-targets';
 
-import * as cdk from "@aws-cdk/core";
-import * as ecs from "@aws-cdk/aws-ecs";
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ssm from "@aws-cdk/aws-ssm";
-import * as iam from "@aws-cdk/aws-iam";
-import * as logs from "@aws-cdk/aws-logs";
+import * as iam from '@aws-cdk/aws-iam';
+import * as logs from '@aws-cdk/aws-logs';
+import * as ssm from '@aws-cdk/aws-ssm';
+import * as cdk from '@aws-cdk/core';
 
 /**
  * This construct will deploy the Bottlerocket OS updater for Amazon ECS.
@@ -54,7 +54,7 @@ export class BottleRocketUpdater extends cdk.Construct {
   constructor(
     scope: cdk.Construct,
     id: string,
-    props: BottleRocketUpdaterProps
+    props: BottleRocketUpdaterProps,
   ) {
     super(scope, id);
 
@@ -64,110 +64,110 @@ export class BottleRocketUpdater extends cdk.Construct {
     this.scheduleState = props.scheduleState ?? true;
     this.updaterImage =
       props.updaterImage ??
-      "public.ecr.aws/bottlerocket/bottlerocket-ecs-updater:v0.1.0";
+      'public.ecr.aws/bottlerocket/bottlerocket-ecs-updater:v0.1.0';
 
-    const UpdateCheckCommand = new ssm.CfnDocument(this, "UpdateCheckCommand", {
+    const UpdateCheckCommand = new ssm.CfnDocument(this, 'UpdateCheckCommand', {
       content: {
-        schemaVersion: "2.2",
-        description: "Bottlerocket - Check available updates",
+        schemaVersion: '2.2',
+        description: 'Bottlerocket - Check available updates',
         mainSteps: [
           {
-            action: "aws:runShellScript",
-            name: "CheckUpdate",
+            action: 'aws:runShellScript',
+            name: 'CheckUpdate',
             precondition: {
-              StringEquals: ["platformType", "Linux"],
+              StringEquals: ['platformType', 'Linux'],
             },
             inputs: {
-              timeoutSeconds: "1800",
-              runCommand: ["apiclient update check"],
+              timeoutSeconds: '1800',
+              runCommand: ['apiclient update check'],
             },
           },
         ],
       },
       name: `UpdateCheckCommand${cdk.Stack.of(this).stackName}`,
-      documentType: "Command",
+      documentType: 'Command',
     });
 
-    const UpdateApplyCommand = new ssm.CfnDocument(this, "UpdateApplyCommand", {
+    const UpdateApplyCommand = new ssm.CfnDocument(this, 'UpdateApplyCommand', {
       content: {
-        schemaVersion: "2.2",
-        description: "Bottlerocket - Apply update",
+        schemaVersion: '2.2',
+        description: 'Bottlerocket - Apply update',
         mainSteps: [
           {
-            action: "aws:runShellScript",
-            name: "ApplyUpdate",
+            action: 'aws:runShellScript',
+            name: 'ApplyUpdate',
             precondition: {
-              StringEquals: ["platformType", "Linux"],
+              StringEquals: ['platformType', 'Linux'],
             },
             inputs: {
-              timeoutSeconds: "1800",
-              runCommand: ["apiclient update apply"],
+              timeoutSeconds: '1800',
+              runCommand: ['apiclient update apply'],
             },
           },
         ],
       },
       name: `UpdateApplyCommand${cdk.Stack.of(this).stackName}`,
-      documentType: "Command",
+      documentType: 'Command',
     });
 
-    const RebootCommand = new ssm.CfnDocument(this, "RebootCommand", {
+    const RebootCommand = new ssm.CfnDocument(this, 'RebootCommand', {
       content: {
-        schemaVersion: "2.2",
-        description: "Bottlerocket - Reboot",
+        schemaVersion: '2.2',
+        description: 'Bottlerocket - Reboot',
         mainSteps: [
           {
-            action: "aws:runShellScript",
-            name: "Reboot",
+            action: 'aws:runShellScript',
+            name: 'Reboot',
             precondition: {
-              StringEquals: ["platformType", "Linux"],
+              StringEquals: ['platformType', 'Linux'],
             },
             inputs: {
-              timeoutSeconds: "1800",
-              runCommand: ["apiclient reboot"],
+              timeoutSeconds: '1800',
+              runCommand: ['apiclient reboot'],
             },
           },
         ],
       },
       name: `RebootCommand${cdk.Stack.of(this).stackName}`,
-      documentType: "Command",
+      documentType: 'Command',
     });
 
     const policyStatementWildcards = new iam.PolicyStatement({
       actions: [
-        "ecs:DescribeContainerInstances",
-        "ecs:ListTasks",
-        "ecs:UpdateContainerInstancesState",
-        "ecs:DescribeTasks",
-        "ec2:DescribeInstanceStatus",
+        'ecs:DescribeContainerInstances',
+        'ecs:ListTasks',
+        'ecs:UpdateContainerInstancesState',
+        'ecs:DescribeTasks',
+        'ec2:DescribeInstanceStatus',
       ],
       effect: iam.Effect.ALLOW,
-      resources: ["*"],
+      resources: ['*'],
     });
 
     const policyStatementCluster = new iam.PolicyStatement({
-      actions: ["ecs:ListContainerInstances"],
+      actions: ['ecs:ListContainerInstances'],
       effect: iam.Effect.ALLOW,
       resources: [this.cluster.clusterArn],
     });
 
     const policyStatementClusterConditional = new iam.PolicyStatement({
       actions: [
-        "ecs:DescribeContainerInstances",
-        "ecs:ListTasks",
-        "ecs:UpdateContainerInstancesState",
-        "ecs:DescribeTasks",
+        'ecs:DescribeContainerInstances',
+        'ecs:ListTasks',
+        'ecs:UpdateContainerInstancesState',
+        'ecs:DescribeTasks',
       ],
       effect: iam.Effect.ALLOW,
-      resources: ["*"],
+      resources: ['*'],
       conditions: {
         ArnEquals: {
-          "ecs:cluster": this.cluster.clusterArn,
+          'ecs:cluster': this.cluster.clusterArn,
         },
       },
     });
 
     const policyStatementSSMSendCommand = new iam.PolicyStatement({
-      actions: ["ssm:SendCommand"],
+      actions: ['ssm:SendCommand'],
       effect: iam.Effect.ALLOW,
       resources: [
         `arn:${cdk.Stack.of(this).partition}:ssm:${cdk.Stack.of(this).region}:${
@@ -186,7 +186,7 @@ export class BottleRocketUpdater extends cdk.Construct {
     });
 
     const policyStatementSSMGetCommand = new iam.PolicyStatement({
-      actions: ["ssm:GetCommandInvocation"],
+      actions: ['ssm:GetCommandInvocation'],
       effect: iam.Effect.ALLOW,
       resources: [
         `arn:${cdk.Stack.of(this).partition}:ssm:${cdk.Stack.of(this).region}:${
@@ -195,17 +195,17 @@ export class BottleRocketUpdater extends cdk.Construct {
       ],
     });
 
-    const logGroup = new logs.LogGroup(this, "UpdaterLogGroup", {
+    const logGroup = new logs.LogGroup(this, 'UpdaterLogGroup', {
       retention: logs.RetentionDays.ONE_DAY,
     });
 
     const updaterTaskDef = new ecs.FargateTaskDefinition(
       this,
-      "UpdaterTaskDef",
+      'UpdaterTaskDef',
       {
         cpu: 256,
         memoryLimitMiB: 512,
-      }
+      },
     );
 
     updaterTaskDef.addToTaskRolePolicy(policyStatementCluster);
@@ -214,29 +214,29 @@ export class BottleRocketUpdater extends cdk.Construct {
     updaterTaskDef.addToTaskRolePolicy(policyStatementWildcards);
     updaterTaskDef.addToTaskRolePolicy(policyStatementSSMSendCommand);
 
-    updaterTaskDef.addContainer("UpdaterContainer", {
+    updaterTaskDef.addContainer('UpdaterContainer', {
       image: ecs.ContainerImage.fromRegistry(this.updaterImage),
       command: [
-        "-cluster",
+        '-cluster',
         `${this.cluster.clusterName}`,
-        "-region",
+        '-region',
         `${cdk.Stack.of(this).region}`,
-        "-check-document",
+        '-check-document',
         `${UpdateCheckCommand.name}`,
-        "-apply-document",
+        '-apply-document',
         `${UpdateApplyCommand.name}`,
-        "-reboot-document",
+        '-reboot-document',
         `${RebootCommand.name}`,
       ],
       logging: ecs.LogDriver.awsLogs({
         logGroup: logGroup,
-        streamPrefix: "brUpdaterEcsTask",
+        streamPrefix: 'brUpdaterEcsTask',
       }),
     });
 
-    new cdk.CfnOutput(this, "BottleRocketUpdateLG", {
+    new cdk.CfnOutput(this, 'BottleRocketUpdateLG', {
       value: logGroup.logGroupName,
-      exportName: "BrUpdaterLogGroupName",
+      exportName: 'BrUpdaterLogGroupName',
     });
 
     const ecsTaskTarget = new EcsTask({
@@ -245,7 +245,7 @@ export class BottleRocketUpdater extends cdk.Construct {
     });
 
     if (this.scheduleState) {
-      new Rule(this, "ScheduleRule", {
+      new Rule(this, 'ScheduleRule', {
         schedule: Schedule.rate(cdk.Duration.minutes(5)),
         targets: [ecsTaskTarget],
       });
