@@ -16,13 +16,6 @@ import * as cdk from '@aws-cdk/core';
  */
 
 /**
- * This construct will deploy the Bottlerocket OS updater for Amazon ECS.
- * Note that while we built this construct, the CDK does offer the ability
- * to import existing CFN templates. See the documentation for more info.
- * https://docs.aws.amazon.com/cdk/latest/guide/use_cfn_template.html
- */
-
-/**
  * The properties for the BottleRocketUpdater
  */
 export interface BottleRocketUpdaterProps {
