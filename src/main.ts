@@ -1,5 +1,5 @@
-import { App } from "@aws-cdk/core";
-import { BottleRocketECS } from "./bottlerocket_environment";
+import { App } from '@aws-cdk/core';
+import { BottleRocketECS } from './bottlerocket_environment';
 
 // for development, use account/region from cdk cli
 const devEnv = {
@@ -8,5 +8,5 @@ const devEnv = {
 };
 
 const app = new App();
-new BottleRocketECS(app, "BottleRocketDemo", { env: devEnv });
+new BottleRocketECS(app, 'BottleRocketDemo', { env: devEnv });
 app.synth();
